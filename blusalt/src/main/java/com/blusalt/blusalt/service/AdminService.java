@@ -13,6 +13,7 @@ public interface AdminService {
     ResponseEntity<ApiResponse<?>> onboardDrone(OnboardDroneDTO.Request request);
     ResponseEntity<ApiResponse<?>> CreateMedication(CreateMedication.Request request);
     ResponseEntity<ApiResponse<?>> loadDrone(LoadDroneDTO.Request request);
+    ResponseEntity<ApiResponse<?>> removeMedicationsFromDrone(LoadDroneDTO.Request request);
     ResponseEntity<ApiResponse<?>> makeDroneAvailableForLoading(UUID droneId);
     ResponseEntity<ApiResponse<?>> getItemsLoadedOnDrone(UUID id);
 

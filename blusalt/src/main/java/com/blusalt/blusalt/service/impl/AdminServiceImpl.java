@@ -137,6 +137,61 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    public ResponseEntity<ApiResponse<?>> removeMedicationsFromDrone(LoadDroneDTO.Request request) {
+        try {
+            Optional<Drone> optionalDrone = droneJPAService.findById(request.getDroneId());
+            if (optionalDrone.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(createFailureResponse("", "Drone does not exist"));
+            }
+            Drone drone = optionalDrone.get();
+            log.info("drone:{}", drone.getSerialNumber());
+
+            double currentTotalWeight = drone.getTotalWeightState();
+            log.info("current weight:{}", currentTotalWeight);
+
+            List<UUID> medicationIds = request.getMedicationId();
+            for (UUID medicationId : medicationIds) {
+                log.info("Removing medicationId: {}", medicationId);
+                Optional<Medication> optionalMedication = medicationJPAService.findById(medicationId);
+                if (optionalMedication.isEmpty()) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                            .body(createFailureResponse("", "Medication with ID " + medicationId + " not found"));
+                }
+
+                Medication medication = optionalMedication.get();
+                log.info("Found medication: {}", medication.getCode());
+
+                if (!drone.getMedications().contains(medication)) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(createFailureResponse("", "Medication not found in drone's medication list"));
+                }
+
+                log.info("Removing medication weight: {}", medication.getWeight());
+                currentTotalWeight -= medication.getWeight();
+                drone.setTotalWeightState(currentTotalWeight);
+
+                drone.getMedications().remove(medication);
+            }
+
+            // Update drone state if there are no more medications
+            if (drone.getMedications().isEmpty()) {
+                drone.setDroneState(DroneState.IDLE);
+            }
+
+            droneJPAService.saveDrone(drone);
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(createSuccessResponse("", "Medications removed from the drone successfully"));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(createFailureResponse("", "An error occurred while removing medications from the drone"));
+        }
+    }
+
+
+    @Override
     public ResponseEntity<ApiResponse<?>> makeDroneAvailableForLoading(UUID droneId) {
         try {
             Optional<Drone> optionalDrone = droneJPAService.findById(droneId);

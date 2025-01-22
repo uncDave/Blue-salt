@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  pay-by-transfer:
+    image: bluesalt:0.0.1
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://host.docker.internal:1700/bluesaltdronedb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+    ports:
+      - "7880:7880"
+    deploy:
+          replicas: 1
+    volumes:
+      - bluesalt_data:/home/bluesalt-core/
+
+volumes:
+  bluesalt_data:

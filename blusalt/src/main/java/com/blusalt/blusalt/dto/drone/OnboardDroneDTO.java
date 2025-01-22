@@ -67,5 +67,15 @@ public class OnboardDroneDTO {
             private long  totalDrones;
             private int page, totalPages;
         }
+
+
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    public static class logoUploadResponse {
+        private String logoUrl;
+
     }
 }

@@ -24,10 +24,6 @@ public class Drone extends BaseEntity{
     private double batteryPercentage;
     private double weight;
     private double totalWeightState = 0;
-//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    @JoinColumn(name = "drone_id")
-//    private ArrayList<Medication> medications = new ArrayList<>();
-
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Medication> medications;
 

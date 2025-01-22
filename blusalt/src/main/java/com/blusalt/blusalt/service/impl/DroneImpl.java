@@ -1,6 +1,7 @@
 package com.blusalt.blusalt.service.impl;
 
 import com.blusalt.blusalt.dto.drone.OnboardDroneDTO;
+import com.blusalt.blusalt.dto.drone.UpdateDroneDTO;
 import com.blusalt.blusalt.entity.Drone;
 import com.blusalt.blusalt.enums.DroneState;
 import com.blusalt.blusalt.service.DroneService;
@@ -120,4 +121,42 @@ public class DroneImpl implements DroneService {
                     .body(createFailureResponse(e.getLocalizedMessage(), e.getMessage()));
         }
     }
+
+    @Override
+    public ResponseEntity<ApiResponse<?>> updateDrone(UUID droneId, UpdateDroneDTO.UpdateDroneRequest updateDroneDTO) {
+        try {
+            // Check if drone exists
+            Optional<Drone> optionalDrone = droneJPAService.findById(droneId);
+            if (optionalDrone.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)  // Use 404 if drone does not exist
+                        .body(createFailureResponse(null, "Drone does not exist"));
+            }
+
+            Drone existingDrone = optionalDrone.get();
+
+            if (updateDroneDTO.getSerialNumber() != null) {
+                existingDrone.setSerialNumber(updateDroneDTO.getSerialNumber());
+            }
+            if (updateDroneDTO.getBatteryPercentage() != null) {
+                existingDrone.setBatteryPercentage(updateDroneDTO.getBatteryPercentage());
+            }
+            if (updateDroneDTO.getWeight() != null) {
+                existingDrone.setWeight(updateDroneDTO.getWeight());
+            }
+            if (updateDroneDTO.getDroneState() != null) {
+                existingDrone.setDroneState(updateDroneDTO.getDroneState());
+            }
+            UpdateDroneDTO.UpdateDroneResponse response = UpdateDroneDTO.UpdateDroneResponse.builder().serialNumber(existingDrone.getSerialNumber()).build();
+
+
+            Drone updatedDrone = droneJPAService.saveDrone(existingDrone);
+            return ResponseEntity.ok(createSuccessResponse(response, "Drone updated successfully"));
+
+        } catch (Exception e) {
+            log.error("Error while updating drone with id: {}", droneId, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(createFailureResponse(e.getLocalizedMessage(), "Error while updating drone"));
+        }
+    }
+
 }
