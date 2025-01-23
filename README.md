@@ -36,7 +36,7 @@ This system is built with Spring Boot and uses PostgreSQL for database storage a
 1. **Install PostgreSQL**: If you don’t have PostgreSQL installed, download and install it from [PostgreSQL Downloads](https://www.postgresql.org/download/).
 2. **Create a Database**: Create a new PostgreSQL database for the project.
    ```bash
-   CREATE DATABASE drone_management;
+   CREATE DATABASE bluesaltdronedb;
 
 
 ### Commit history

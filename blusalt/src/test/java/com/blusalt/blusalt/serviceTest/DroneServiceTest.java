@@ -11,13 +11,19 @@ import com.blusalt.blusalt.service.JpaService.DroneJPAService;
 import com.blusalt.blusalt.service.JpaService.MedicationJPAService;
 import com.blusalt.blusalt.service.impl.AdminServiceImpl;
 import com.blusalt.blusalt.service.impl.DroneImpl;
+import com.blusalt.blusalt.utils.apiresponseutils.ApiResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class DroneServiceTest {
     @Mock
     private DroneJPAService droneJPAService;
@@ -32,11 +39,11 @@ public class DroneServiceTest {
     @Mock
     private MedicationJPAService medicationJPAService;
 
-    @Mock
-    private DroneAuditTrailService droneAuditTrailService;
-
-    @InjectMocks
-    private DroneImpl droneService;
+//    @Mock
+//    private DroneAuditTrailService droneAuditTrailService;
+//
+//    @InjectMocks
+//    private DroneImpl droneService;
 
     @InjectMocks
     private AdminServiceImpl adminService;
@@ -49,7 +56,6 @@ public class DroneServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // Set up test drone and medication
         drone = new Drone();
         drone.setId(UUID.randomUUID());
         drone.setSerialNumber("12345");
@@ -71,15 +77,18 @@ public class DroneServiceTest {
         when(droneJPAService.findById(drone.getId())).thenReturn(Optional.of(drone));
         when(medicationJPAService.findById(medication.getId())).thenReturn(Optional.of(medication));
 
-        var response = adminService.loadDrone(loadRequest);
 
-        // Assertions
+        drone.setDroneState(DroneState.IDLE);
+
+        ResponseEntity<ApiResponse<?>> response = adminService.loadDrone(loadRequest);
+
         assertEquals(200, response.getStatusCodeValue());
         assertTrue(drone.getMedications().contains(medication));
         assertEquals(DroneState.LOADED, drone.getDroneState());
         assertEquals(3, drone.getTotalWeightState());
         verify(droneJPAService, times(1)).saveDrone(drone);
     }
+
 
     @Test
     void loadDrone_ShouldReturnNotFound_WhenDroneDoesNotExist() {
@@ -100,6 +109,8 @@ public class DroneServiceTest {
 
         assertEquals(404, response.getStatusCodeValue());
     }
+
+
 
     @Test
     void loadDrone_ShouldReturnBadRequest_WhenDroneExceedsWeightCapacity() {

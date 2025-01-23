@@ -14,6 +14,7 @@ public class CreateMedication {
 
     @Getter
     @Setter
+    @Builder
     public static class Request{
 
         @Pattern(regexp = "^[a-zA-Z0-9-_]+$", message = "Name can only contain letters, numbers, '-', and '_'")

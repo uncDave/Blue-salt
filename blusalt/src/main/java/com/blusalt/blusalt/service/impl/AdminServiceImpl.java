@@ -174,7 +174,6 @@ public class AdminServiceImpl implements AdminService {
                 drone.getMedications().remove(medication);
             }
 
-            // Update drone state if there are no more medications
             if (drone.getMedications().isEmpty()) {
                 drone.setDroneState(DroneState.IDLE);
             }

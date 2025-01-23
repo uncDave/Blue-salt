@@ -14,6 +14,7 @@ public class OnboardDroneDTO {
 
     @Getter
     @Setter
+    @Builder
     public static class Request{
         @NotBlank
         @Size(max = 100)
