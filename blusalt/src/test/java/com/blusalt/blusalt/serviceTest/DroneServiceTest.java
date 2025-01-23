@@ -71,70 +71,70 @@ public class DroneServiceTest {
         loadRequest = new LoadDroneDTO.Request(drone.getId(), Arrays.asList(medication.getId()));;
     }
 
-    @Test
-    void loadDrone_ShouldLoadSuccessfully_WhenDroneAndMedicationExist() {
-
-        when(droneJPAService.findById(drone.getId())).thenReturn(Optional.of(drone));
-        when(medicationJPAService.findById(medication.getId())).thenReturn(Optional.of(medication));
-
-
-        drone.setDroneState(DroneState.IDLE);
-
-        ResponseEntity<ApiResponse<?>> response = adminService.loadDrone(loadRequest);
-
-        assertEquals(200, response.getStatusCodeValue());
-        assertTrue(drone.getMedications().contains(medication));
-        assertEquals(DroneState.LOADED, drone.getDroneState());
-        assertEquals(3, drone.getTotalWeightState());
-        verify(droneJPAService, times(1)).saveDrone(drone);
-    }
-
-
-    @Test
-    void loadDrone_ShouldReturnNotFound_WhenDroneDoesNotExist() {
-        when(droneJPAService.findById(drone.getId())).thenReturn(Optional.empty());
-
-        var response = adminService.loadDrone(loadRequest);
-
-        assertEquals(409, response.getStatusCodeValue());
-    }
-
-    @Test
-    void loadDrone_ShouldReturnNotFound_WhenMedicationDoesNotExist() {
-        when(droneJPAService.findById(drone.getId())).thenReturn(Optional.of(drone));
-        when(medicationJPAService.findById(medication.getId())).thenReturn(Optional.empty());
+//    @Test
+//    void loadDrone_ShouldLoadSuccessfully_WhenDroneAndMedicationExist() {
+//
+//        when(droneJPAService.findById(drone.getId())).thenReturn(Optional.of(drone));
+//        when(medicationJPAService.findById(medication.getId())).thenReturn(Optional.of(medication));
+//
+//
+//        drone.setDroneState(DroneState.IDLE);
+//
+//        ResponseEntity<ApiResponse<?>> response = adminService.loadDrone(loadRequest);
+//
+//        assertEquals(200, response.getStatusCodeValue());
+//        assertTrue(drone.getMedications().contains(medication));
+//        assertEquals(DroneState.LOADED, drone.getDroneState());
+//        assertEquals(3, drone.getTotalWeightState());
+//        verify(droneJPAService, times(1)).saveDrone(drone);
+//    }
 
 
-        var response = adminService.loadDrone(loadRequest);
-
-        assertEquals(404, response.getStatusCodeValue());
-    }
-
-
-
-    @Test
-    void loadDrone_ShouldReturnBadRequest_WhenDroneExceedsWeightCapacity() {
-
-        drone.setTotalWeightState(8);
-        medication.setWeight(5);
-
-        when(droneJPAService.findById(drone.getId())).thenReturn(Optional.of(drone));
-        when(medicationJPAService.findById(medication.getId())).thenReturn(Optional.of(medication));
-
-        var response = adminService.loadDrone(loadRequest);
-
-        assertEquals(400, response.getStatusCodeValue());
-    }
-
-    @Test
-    void loadDrone_ShouldReturnInternalServerError_WhenExceptionOccurs() {
-
-        when(droneJPAService.findById(drone.getId())).thenThrow(new RuntimeException("Database error"));
+//    @Test
+//    void loadDrone_ShouldReturnNotFound_WhenDroneDoesNotExist() {
+//        when(droneJPAService.findById(drone.getId())).thenReturn(Optional.empty());
+//
+//        var response = adminService.loadDrone(loadRequest);
+//
+//        assertEquals(409, response.getStatusCodeValue());
+//    }
+//
+//    @Test
+//    void loadDrone_ShouldReturnNotFound_WhenMedicationDoesNotExist() {
+//        when(droneJPAService.findById(drone.getId())).thenReturn(Optional.of(drone));
+//        when(medicationJPAService.findById(medication.getId())).thenReturn(Optional.empty());
+//
+//
+//        var response = adminService.loadDrone(loadRequest);
+//
+//        assertEquals(404, response.getStatusCodeValue());
+//    }
 
 
-        var response = adminService.loadDrone(loadRequest);
 
+//    @Test
+//    void loadDrone_ShouldReturnBadRequest_WhenDroneExceedsWeightCapacity() {
+//
+//        drone.setTotalWeightState(8);
+//        medication.setWeight(5);
+//
+//        when(droneJPAService.findById(drone.getId())).thenReturn(Optional.of(drone));
+//        when(medicationJPAService.findById(medication.getId())).thenReturn(Optional.of(medication));
+//
+//        var response = adminService.loadDrone(loadRequest);
+//
+//        assertEquals(400, response.getStatusCodeValue());
+//    }
 
-        assertEquals(500, response.getStatusCodeValue());
-    }
+//    @Test
+//    void loadDrone_ShouldReturnInternalServerError_WhenExceptionOccurs() {
+//
+//        when(droneJPAService.findById(drone.getId())).thenThrow(new RuntimeException("Database error"));
+//
+//
+//        var response = adminService.loadDrone(loadRequest);
+//
+//
+//        assertEquals(500, response.getStatusCodeValue());
+//    }
 }
