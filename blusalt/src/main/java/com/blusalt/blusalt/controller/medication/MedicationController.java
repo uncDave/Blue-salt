@@ -58,6 +58,7 @@ public class MedicationController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateMedication(@PathVariable UUID id, @Valid @RequestBody UpdateMedicationDTO.UpdateMedicationRequest request) {
+        log.info("update...: {}",id);
         return medicationService.updateMedication(id,request);
     }
 }

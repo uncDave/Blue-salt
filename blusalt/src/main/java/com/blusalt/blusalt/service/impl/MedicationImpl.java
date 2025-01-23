@@ -50,19 +50,19 @@ public class MedicationImpl implements MedicationService {
             Page<Medication> all = medicationJPAService.findAll(pageable);
             if (all.isEmpty()){
                 return ResponseEntity.status(HttpStatus.OK)
-                        .body(createSuccessResponse("", "no drone"));
+                        .body(createSuccessResponse("", "no medication"));
             }
 
             CreateMedication.GetMedication.Response response = new CreateMedication.GetMedication.Response();
             response.setMedication(all.getContent());
             response.setPage(all.getTotalPages());
             response.setTotalPages(all.getTotalPages());
-            response.setTotalDrones(all.getTotalElements());
+            response.setTotalMedication(all.getTotalElements());
 
             return ResponseEntity.status(HttpStatus.OK)
                     .body(createSuccessResponse(response, "all medications retrieved"));
         }catch (IllegalArgumentException e) {
-            log.warn("error while getting all drones");
+            log.warn("error while getting all medications");
             return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
                     .body(createFailureResponse(e.getLocalizedMessage(), e.getMessage()));
         }
@@ -74,7 +74,7 @@ public class MedicationImpl implements MedicationService {
             Optional<Medication> optionalMedication = medicationJPAService.findById(id);
             if (optionalMedication.isEmpty()){
                 return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
-                        .body(createFailureResponse("",""));
+                        .body(createFailureResponse("","medication not found"));
             }
             Medication medication = optionalMedication.get();
 
@@ -82,7 +82,7 @@ public class MedicationImpl implements MedicationService {
                     .body(createSuccessResponse(medication, "medication retrieved"));
 
         }catch (IllegalArgumentException e) {
-            log.warn("error while getting drone with id: {}",id);
+            log.warn("error while getting medication with id: {}",id);
             return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
                     .body(createFailureResponse(e.getLocalizedMessage(), e.getMessage()));
         }
@@ -118,7 +118,7 @@ public class MedicationImpl implements MedicationService {
             Optional<Medication> optionalMedication = medicationJPAService.findById(medicationId);
             if (optionalMedication.isEmpty()){
                 return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
-                        .body(createFailureResponse("",""));
+                        .body(createFailureResponse("","medication not found"));
             }
             Medication existingMedication = optionalMedication.get();
             if (request.getName() != null) {

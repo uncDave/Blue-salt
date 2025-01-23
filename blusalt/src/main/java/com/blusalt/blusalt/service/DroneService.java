@@ -11,6 +11,7 @@ import java.util.UUID;
 public interface DroneService {
     ResponseEntity<ApiResponse<?>> getAll(OnboardDroneDTO.GetDrone getDrone);
     ResponseEntity<ApiResponse<?>> getDroneById(UUID id);
+    ResponseEntity<ApiResponse<?>> getDroneBatteryLevel(UUID id);
     ResponseEntity<ApiResponse<?>> dronesAvailableForLoading(OnboardDroneDTO.GetDrone getDrone);
     ResponseEntity<ApiResponse<?>> getDroneBySerialNumber(String serialNumber);
     ResponseEntity<ApiResponse<?>> updateDrone(UUID droneId, UpdateDroneDTO.UpdateDroneRequest updateDroneDTO);

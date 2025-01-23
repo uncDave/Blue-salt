@@ -78,4 +78,12 @@ public class OnboardDroneDTO {
         private String logoUrl;
 
     }
+
+    @Getter
+    @Setter
+    @Builder
+    public static class BatteryLevelResponse {
+        private double batteryCapacity;
+
+    }
 }

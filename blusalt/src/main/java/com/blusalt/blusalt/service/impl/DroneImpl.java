@@ -3,6 +3,7 @@ package com.blusalt.blusalt.service.impl;
 import com.blusalt.blusalt.dto.drone.OnboardDroneDTO;
 import com.blusalt.blusalt.dto.drone.UpdateDroneDTO;
 import com.blusalt.blusalt.entity.Drone;
+import com.blusalt.blusalt.enums.DroneModel;
 import com.blusalt.blusalt.enums.DroneState;
 import com.blusalt.blusalt.service.DroneService;
 import com.blusalt.blusalt.service.JpaService.DroneJPAService;
@@ -67,7 +68,7 @@ public class DroneImpl implements DroneService {
             Optional<Drone> optionalDrone = droneJPAService.findById(id);
             if (optionalDrone.isEmpty()){
                 return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
-                        .body(createFailureResponse("",""));
+                        .body(createFailureResponse("","drone does not exist"));
             }
             Drone drone = optionalDrone.get();
 
@@ -76,6 +77,28 @@ public class DroneImpl implements DroneService {
 
         }catch (IllegalArgumentException e) {
             log.warn("error while getting drone with id: {}",id);
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                    .body(createFailureResponse(e.getLocalizedMessage(), e.getMessage()));
+        }
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<?>> getDroneBatteryLevel(UUID id) {
+        try {
+            Optional<Drone> optionalDrone = droneJPAService.findById(id);
+            if (optionalDrone.isEmpty()){
+                return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                        .body(createFailureResponse("",""));
+            }
+            Drone drone = optionalDrone.get();
+
+            OnboardDroneDTO.BatteryLevelResponse response = OnboardDroneDTO.BatteryLevelResponse.builder().batteryCapacity(drone.getBatteryPercentage()).build();
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(createSuccessResponse(response, "drone retrieved"));
+
+        }catch (IllegalArgumentException e) {
+            log.warn("error while getting drone battery with id: {}",id);
             return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
                     .body(createFailureResponse(e.getLocalizedMessage(), e.getMessage()));
         }
@@ -143,8 +166,11 @@ public class DroneImpl implements DroneService {
             if (updateDroneDTO.getWeight() != null) {
                 existingDrone.setWeight(updateDroneDTO.getWeight());
             }
+            if (updateDroneDTO.getModel() != null){
+                existingDrone.setDroneModel(DroneModel.valueOf(updateDroneDTO.getModel()));
+            }
             if (updateDroneDTO.getDroneState() != null) {
-                existingDrone.setDroneState(updateDroneDTO.getDroneState());
+                existingDrone.setDroneState(DroneState.valueOf(updateDroneDTO.getDroneState()));
             }
             UpdateDroneDTO.UpdateDroneResponse response = UpdateDroneDTO.UpdateDroneResponse.builder().serialNumber(existingDrone.getSerialNumber()).build();
 

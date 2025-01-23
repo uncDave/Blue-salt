@@ -17,7 +17,8 @@ public class UpdateDroneDTO {
         private String serialNumber;
         private Double batteryPercentage;
         private Double weight;
-        private DroneState droneState;
+        private String droneState;
+        private String model;
     }
 
     @Getter

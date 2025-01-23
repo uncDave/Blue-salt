@@ -59,7 +59,7 @@ public class CreateMedication {
         @Setter
         public static class Response{
             private List<Medication> medication;
-            private long  totalDrones;
+            private long  totalMedication;
             private int page, totalPages;
         }
     }

@@ -94,6 +94,13 @@ public class DroneController {
         return droneService.getDroneById(uuid);
     }
 
+    @GetMapping("/battery/{uuid}")
+//    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> getBattery( @PathVariable UUID uuid) {
+        log.info("get drones battery by id: {} ", uuid);
+        return droneService.getDroneBatteryLevel(uuid);
+    }
+
     @GetMapping("/drone-items")
 //    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getItemsOnDrone( @RequestParam UUID uuid) {
